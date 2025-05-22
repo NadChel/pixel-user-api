@@ -1,13 +1,23 @@
 package com.example.pixel_user_api.mapper;
 
 import com.example.pixel_user_api.data.entity.PhoneData;
+import com.example.pixel_user_api.data.entity.User;
+import org.mapstruct.AnnotateWith;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.springframework.stereotype.Component;
 
-@Mapper(componentModel = "spring")
+@Mapper
+@AnnotateWith(Component.class)
 public interface PhoneMapper {
-    @Mapping(source = "phone", target = ".")
-    String toString(PhoneData phoneData);
-    @Mapping(source = ".", target = "phone")
-    PhoneData toPhoneData(String phone);
+
+    default String toString(PhoneData phoneData) {
+        String phone = phoneData == null ? null : phoneData.getPhone();
+        return phone;
+    }
+
+    @Mapping(source = "phone", target = "phone")
+    @Mapping(source = "user", target = "user")
+    @Mapping(target = "id", ignore = true)
+    PhoneData toPhoneData(String phone, User user);
 }

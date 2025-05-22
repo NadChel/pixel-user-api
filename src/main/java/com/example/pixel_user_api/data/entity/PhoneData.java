@@ -1,6 +1,5 @@
 package com.example.pixel_user_api.data.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -8,6 +7,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,5 +22,6 @@ public class PhoneData {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+    @Pattern(regexp = "\\d+", message = "Phone number must contain digits only")
     private String phone;
 }

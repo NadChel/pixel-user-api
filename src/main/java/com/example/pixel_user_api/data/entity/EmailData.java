@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,5 +22,6 @@ public class EmailData {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+    @Email(message = "Email must be valid")
     private String email;
 }
