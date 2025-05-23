@@ -13,6 +13,8 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -21,7 +23,9 @@ import java.util.List;
 @Getter
 @Setter
 @Table(name = "\"user\"")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -31,11 +35,14 @@ public class User {
     @Size(min = 8, max = 500, message = "Password must be between 8 and 500 characters")
     private String password;
     @OneToOne(mappedBy = "user")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Account account;
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER,
             cascade = CascadeType.ALL, orphanRemoval = true)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private List<EmailData> emailData;
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER,
             cascade = CascadeType.ALL, orphanRemoval = true)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private List<PhoneData> phoneData;
 }

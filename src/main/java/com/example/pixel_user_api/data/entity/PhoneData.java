@@ -10,12 +10,16 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Entity
 @Getter
 @Setter
 @Table(name = "phone_data")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class PhoneData {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

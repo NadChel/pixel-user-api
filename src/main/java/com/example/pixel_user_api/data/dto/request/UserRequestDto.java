@@ -10,7 +10,6 @@ import java.util.List;
 public class UserRequestDto {
 
     private Long id;
-    private String name;
     private List<String> emailData;
     private List<String> phoneData;
 }
