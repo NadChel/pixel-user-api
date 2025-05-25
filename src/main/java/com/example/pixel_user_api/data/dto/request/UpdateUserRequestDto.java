@@ -7,7 +7,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class UserRequestDto {
+public class UpdateUserRequestDto {
 
     private Long id;
     private List<String> emailData;

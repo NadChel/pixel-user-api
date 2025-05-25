@@ -1,6 +1,7 @@
 package com.example.pixel_user_api.service;
 
-import com.example.pixel_user_api.data.dto.request.UserRequestDto;
+import com.example.pixel_user_api.data.dto.request.FindUserRequestDto;
+import com.example.pixel_user_api.data.dto.request.UpdateUserRequestDto;
 import com.example.pixel_user_api.data.dto.response.UserResponseDto;
 import com.example.pixel_user_api.data.entity.EmailData;
 import com.example.pixel_user_api.data.entity.PhoneData;
@@ -11,6 +12,7 @@ import com.example.pixel_user_api.mapper.UserMapper;
 import com.example.pixel_user_api.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,17 +26,17 @@ import java.util.function.Predicate;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository repository;
-    private final UserMapper mapper;
+    private final UserMapper userMapper;
     private final EmailMapper emailMapper;
     private final PhoneMapper phoneMapper;
 
     @Override
     @Transactional(readOnly = false)
-    public UserResponseDto update(UserRequestDto userRequestDto) {
+    public UserResponseDto update(UpdateUserRequestDto userRequestDto) {
         User user = loadUser(userRequestDto.getId());
         updateUser(user, userRequestDto);
         User updatedUser = repository.save(user);
-        return mapper.toResponseDto(updatedUser);
+        return userMapper.toResponseDto(updatedUser);
     }
 
     private User loadUser(Long userId) {
@@ -45,12 +47,12 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
-    private void updateUser(User user, UserRequestDto userRequestDto) {
+    private void updateUser(User user, UpdateUserRequestDto userRequestDto) {
         updateUserEmails(user, userRequestDto);
         updateUserPhones(user, userRequestDto);
     }
 
-    private void updateUserEmails(User user, UserRequestDto userRequestDto) {
+    private void updateUserEmails(User user, UpdateUserRequestDto userRequestDto) {
         List<EmailData> userEmailData = user.getEmailData();
         List<String> requestEmails = userRequestDto.getEmailData();
         removeStaleEmails(userEmailData, requestEmails);
@@ -79,7 +81,7 @@ public class UserServiceImpl implements UserService {
         return isNewEmail;
     }
 
-    private void updateUserPhones(User user, UserRequestDto userRequestDto) {
+    private void updateUserPhones(User user, UpdateUserRequestDto userRequestDto) {
         List<PhoneData> userPhoneData = user.getPhoneData();
         List<String> requestPhones = userRequestDto.getPhoneData();
         removeStalePhones(userPhoneData, requestPhones);
@@ -106,5 +108,19 @@ public class UserServiceImpl implements UserService {
                 .map(PhoneData::getPhone)
                 .noneMatch(p -> p.equals(requestPhone));
         return isNewPhone;
+    }
+
+    @Override
+    public List<UserResponseDto> find(FindUserRequestDto userRequestDto, Pageable pageable) {
+        List<User> users = repository.find(
+                userRequestDto.getDateOfBirth(),
+                userRequestDto.getPhone(),
+                userRequestDto.getName(),
+                userRequestDto.getEmail(),
+                pageable);
+        List<UserResponseDto> userDtos = users.stream()
+                .map(userMapper::toResponseDto)
+                .toList();
+        return userDtos;
     }
 }
