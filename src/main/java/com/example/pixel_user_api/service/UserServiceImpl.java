@@ -112,12 +112,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserResponseDto> find(FindUserRequestDto userRequestDto, Pageable pageable) {
-        List<User> users = repository.find(
-                userRequestDto.getDateOfBirth(),
-                userRequestDto.getPhone(),
-                userRequestDto.getName(),
-                userRequestDto.getEmail(),
-                pageable);
+        List<User> users = repository.find(userRequestDto, pageable);
         List<UserResponseDto> userDtos = users.stream()
                 .map(userMapper::toResponseDto)
                 .toList();
