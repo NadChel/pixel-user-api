@@ -13,9 +13,11 @@ import com.example.pixel_user_api.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -112,10 +114,27 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserResponseDto> find(FindUserRequestDto userRequestDto, Pageable pageable) {
-        List<User> users = repository.find(userRequestDto, pageable);
+        Specification<User> specification = buildSpecification(userRequestDto);
+        List<User> users = repository.findAll(specification, pageable);
         List<UserResponseDto> userDtos = users.stream()
                 .map(userMapper::toResponseDto)
                 .toList();
         return userDtos;
+    }
+
+    private static Specification<User> buildSpecification(FindUserRequestDto userRequestDto) {
+        return (root, query, criteriaBuilder) -> {
+            var nameBeginsWith = criteriaBuilder.like(root.get("name"), userRequestDto.getName() + "%");
+            var bornAfter = criteriaBuilder.greaterThan(root.get("dateOfBirth"), userRequestDto.getDateOfBirth());
+            var hasEmail = criteriaBuilder.equal(root.join("emailData").get("email"), userRequestDto.getEmail());
+            var hasPhone = criteriaBuilder.equal(root.join("phoneData").get("phone"), userRequestDto.getPhone());
+
+            List<jakarta.persistence.criteria.Predicate> predicates = new ArrayList<>();
+            if (userRequestDto.getName() != null) predicates.add(nameBeginsWith);
+            if (userRequestDto.getDateOfBirth() != null) predicates.add(bornAfter);
+            if (userRequestDto.getEmail() != null) predicates.add(hasEmail);
+            if (userRequestDto.getPhone() != null) predicates.add(hasPhone);
+            return criteriaBuilder.and(predicates.toArray(new jakarta.persistence.criteria.Predicate[0]));
+        };
     }
 }
