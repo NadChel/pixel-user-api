@@ -27,8 +27,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = false)
-    public UserResponseDto update(UpdateUserRequestDto userRequestDto) {
-        User user = loadUser(userRequestDto.getId());
+    public UserResponseDto update(long id, UpdateUserRequestDto userRequestDto) {
+        User user = loadUser(id);
         userMapper.updateUser(user, userRequestDto);
         User updatedUser = repository.save(user);
         return userMapper.toResponseDto(updatedUser);

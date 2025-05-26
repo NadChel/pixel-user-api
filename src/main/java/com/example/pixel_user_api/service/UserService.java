@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface UserService {
-    UserResponseDto update(UpdateUserRequestDto userRequestDto);
+    UserResponseDto update(long id, UpdateUserRequestDto userRequestDto);
 
     List<UserResponseDto> find(FindUserRequestDto userRequestDto, Pageable pageable);
 }

@@ -9,7 +9,6 @@ import java.util.List;
 @Setter
 public class UpdateUserRequestDto {
 
-    private Long id;
     private List<String> emailData;
     private List<String> phoneData;
 }
