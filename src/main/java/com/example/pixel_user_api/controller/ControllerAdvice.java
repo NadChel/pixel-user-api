@@ -1,5 +1,6 @@
 package com.example.pixel_user_api.controller;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,12 @@ public class ControllerAdvice {
         String message = e.getConstraintViolations().stream()
                 .map(ConstraintViolation::getMessage)
                 .collect(Collectors.joining("\n"));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<String> handleEntityNotFound(EntityNotFoundException e) {
+        String message = e.getMessage();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
     }
 }

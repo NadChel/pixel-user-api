@@ -1,8 +1,6 @@
 package com.example.pixel_user_api.data.entity;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -20,12 +18,17 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class PhoneData {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+    @Id
     @Pattern(regexp = "\\d+", message = "Phone number must contain digits only")
     private String phone;
+
+    public static PhoneData of(String phone, User user) {
+        PhoneData phoneData = new PhoneData();
+        phoneData.setPhone(phone);
+        phoneData.setUser(user);
+        return phoneData;
+    }
 }

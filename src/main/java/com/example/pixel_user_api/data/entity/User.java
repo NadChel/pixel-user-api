@@ -45,4 +45,14 @@ public class User {
             cascade = CascadeType.ALL, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private List<PhoneData> phoneData;
+
+    public void setEmailData(List<EmailData> emailData) {
+        this.emailData.clear();
+        this.emailData.addAll(emailData);
+    }
+
+    public void setPhoneData(List<PhoneData> phoneData) {
+        this.phoneData.clear();
+        this.phoneData.addAll(phoneData);
+    }
 }
