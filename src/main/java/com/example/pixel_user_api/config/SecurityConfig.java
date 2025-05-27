@@ -1,5 +1,6 @@
 package com.example.pixel_user_api.config;
 
+import com.example.pixel_user_api.service.UserPermissionService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
@@ -7,6 +8,8 @@ import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -17,6 +20,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 @Configuration
 @EnableMethodSecurity
@@ -49,5 +53,16 @@ public class SecurityConfig {
         NimbusJwtDecoder jwtDecoder = NimbusJwtDecoder.withSecretKey(secretKey)
                 .macAlgorithm(algorithm).build();
         return jwtDecoder;
+    }
+
+    @Bean
+    public UserPermissionService userPermissionService() {
+        return userId -> {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication == null || !authentication.isAuthenticated()) return false;
+            Jwt jwt = (Jwt) authentication.getPrincipal();
+            Long currentUserId = jwt.getClaim("userid");
+            return Objects.equals(currentUserId, userId);
+        };
     }
 }

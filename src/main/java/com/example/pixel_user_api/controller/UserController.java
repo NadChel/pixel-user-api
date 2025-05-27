@@ -4,7 +4,6 @@ import com.example.pixel_user_api.data.dto.request.FindUserRequestDto;
 import com.example.pixel_user_api.data.dto.request.UpdateUserRequestDto;
 import com.example.pixel_user_api.data.dto.response.UserResponseDto;
 import com.example.pixel_user_api.mapper.UserMapper;
-import com.example.pixel_user_api.service.UserPermissionService;
 import com.example.pixel_user_api.service.UserService;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
@@ -34,8 +33,8 @@ public class UserController {
     private final UserMapper userMapper;
 
     @PutMapping("/{id}")
-    @PreAuthorize("@userPermissionService.isCurrentUserIdEqualTo(#id)")
-    public ResponseEntity<UserResponseDto> updateUser(@PathVariable long id,
+    @PreAuthorize("@userPermissionService.matchesCurrentUserId(#id)")
+    public ResponseEntity<UserResponseDto> updateUser(@PathVariable Long id,
                                                       @RequestBody UpdateUserRequestDto userRequestDto) {
         UserResponseDto userResponseDto = userService.update(id, userRequestDto);
         return ResponseEntity.ok(userResponseDto);

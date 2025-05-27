@@ -10,7 +10,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Cache;
@@ -32,7 +31,6 @@ public class User {
     private String name;
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
-    @Size(min = 8, max = 500, message = "Password must be between 8 and 500 characters")
     private String password;
     @OneToOne(mappedBy = "user")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
