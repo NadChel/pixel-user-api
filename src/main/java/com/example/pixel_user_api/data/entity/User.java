@@ -8,7 +8,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,10 +30,6 @@ public class User {
     private String name;
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
-    private String password;
-    @OneToOne(mappedBy = "user")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    private Account account;
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER,
             cascade = CascadeType.ALL, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)

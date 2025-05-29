@@ -7,6 +7,7 @@ import com.example.pixel_user_api.data.entity.User;
 import com.example.pixel_user_api.mapper.UserMapper;
 import com.example.pixel_user_api.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.criteria.JoinType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -56,8 +57,8 @@ public class UserServiceImpl implements UserService {
         return (root, query, criteriaBuilder) -> {
             var nameBeginsWith = criteriaBuilder.like(root.get("name"), userRequestDto.getName() + "%");
             var bornAfter = criteriaBuilder.greaterThan(root.get("dateOfBirth"), userRequestDto.getDateOfBirth());
-            var hasEmail = criteriaBuilder.equal(root.join("emailData").get("email"), userRequestDto.getEmail());
-            var hasPhone = criteriaBuilder.equal(root.join("phoneData").get("phone"), userRequestDto.getPhone());
+            var hasEmail = criteriaBuilder.equal(root.join("emailData", JoinType.LEFT).get("email"), userRequestDto.getEmail());
+            var hasPhone = criteriaBuilder.equal(root.join("phoneData", JoinType.LEFT).get("phone"), userRequestDto.getPhone());
 
             List<jakarta.persistence.criteria.Predicate> predicates = new ArrayList<>();
             if (userRequestDto.getName() != null) predicates.add(nameBeginsWith);

@@ -1,4 +1,4 @@
-package com.example.pixel_user_api.controller;
+package com.example.pixel_user_api.controller.advice;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolation;
