@@ -40,7 +40,7 @@ public class UserController {
         return ResponseEntity.ok(userResponseDto);
     }
 
-    @GetMapping
+    @GetMapping("/search")
     public ResponseEntity<List<UserResponseDto>> findUsers(@ParameterObject FindUserRequestDto userRequestDto,
                                                            @ParameterObject Pageable pageable) {
         List<UserResponseDto> userResponseDtos = userService.find(userRequestDto, pageable);

@@ -57,6 +57,7 @@ public class UserServiceImpl implements UserService {
         return (root, query, criteriaBuilder) -> {
             var nameBeginsWith = criteriaBuilder.like(root.get("name"), userRequestDto.getName() + "%");
             var bornAfter = criteriaBuilder.greaterThan(root.get("dateOfBirth"), userRequestDto.getDateOfBirth());
+            root.fetch("emailData", JoinType.LEFT);
             var hasEmail = criteriaBuilder.equal(root.join("emailData", JoinType.LEFT).get("email"), userRequestDto.getEmail());
             var hasPhone = criteriaBuilder.equal(root.join("phoneData", JoinType.LEFT).get("phone"), userRequestDto.getPhone());
 
