@@ -3,7 +3,7 @@ package com.example.pixel_user_api.controller;
 import com.example.pixel_user_api.data.dto.request.FindUserRequestDto;
 import com.example.pixel_user_api.data.dto.request.UpdateUserRequestDto;
 import com.example.pixel_user_api.data.dto.response.UserResponseDto;
-import com.example.pixel_user_api.mapper.UserMapper;
+import com.example.pixel_user_api.service.AuthenticationService;
 import com.example.pixel_user_api.service.UserService;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
@@ -11,9 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,14 +30,18 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-    private final UserMapper userMapper;
+    private final AuthenticationService authenticationService;
 
-    @PutMapping("/{id}")
-    @PreAuthorize("@userPermissionService.matchesCurrentUserId(#id)")
-    public ResponseEntity<UserResponseDto> updateUser(@PathVariable Long id,
-                                                      @RequestBody UpdateUserRequestDto userRequestDto) {
-        UserResponseDto userResponseDto = userService.update(id, userRequestDto);
+    @PutMapping
+    public ResponseEntity<UserResponseDto> updateUser(@RequestBody UpdateUserRequestDto userRequestDto) {
+        Long userId = authenticationService.getCurrentUserId().orElseThrow(this::authenticationException);
+        UserResponseDto userResponseDto = userService.update(userId, userRequestDto);
         return ResponseEntity.ok(userResponseDto);
+    }
+
+    private AuthenticationException authenticationException() {
+        String message = "No authenticated claim found";
+        return new AuthenticationCredentialsNotFoundException(message);
     }
 
     @GetMapping("/search")
