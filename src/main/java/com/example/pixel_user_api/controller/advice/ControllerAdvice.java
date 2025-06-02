@@ -18,12 +18,21 @@ public class ControllerAdvice {
         String message = e.getConstraintViolations().stream()
                 .map(ConstraintViolation::getMessage)
                 .collect(Collectors.joining("\n"));
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
+        return unprocessableEntityWithMessage(message);
+    }
+
+    private static ResponseEntity<String> unprocessableEntityWithMessage(String message) {
+        ResponseEntity<String> response = ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(message);
+        return response;
     }
 
     @ExceptionHandler
     public ResponseEntity<String> handleEntityNotFound(EntityNotFoundException e) {
-        String message = e.getMessage();
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
+        return unprocessableEntityWithMessage(e);
+    }
+
+    private static ResponseEntity<String> unprocessableEntityWithMessage(Exception exception) {
+        String message = exception.getMessage();
+        return unprocessableEntityWithMessage(message);
     }
 }

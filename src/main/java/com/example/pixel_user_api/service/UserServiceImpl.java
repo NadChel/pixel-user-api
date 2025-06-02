@@ -8,6 +8,7 @@ import com.example.pixel_user_api.mapper.UserMapper;
 import com.example.pixel_user_api.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -32,11 +33,12 @@ public class UserServiceImpl implements UserService {
         User user = loadUser(id);
         userMapper.updateUser(user, userRequestDto);
         User updatedUser = repository.save(user);
-        return userMapper.toResponseDto(updatedUser);
+        UserResponseDto userResponseDto = userMapper.toResponseDto(updatedUser);
+        return userResponseDto;
     }
 
     private User loadUser(Long userId) {
-        if (userId == null) throw new EntityNotFoundException("Update request has no id");
+        if (userId == null) throw new EntityNotFoundException("No user id is passed in");
         Optional<User> userOptional = repository.findById(userId);
         if (userOptional.isEmpty()) throw new EntityNotFoundException("No such user");
         User user = userOptional.get();
@@ -61,12 +63,12 @@ public class UserServiceImpl implements UserService {
             var hasEmail = criteriaBuilder.equal(root.join("emailData", JoinType.LEFT).get("email"), userRequestDto.getEmail());
             var hasPhone = criteriaBuilder.equal(root.join("phoneData", JoinType.LEFT).get("phone"), userRequestDto.getPhone());
 
-            List<jakarta.persistence.criteria.Predicate> predicates = new ArrayList<>();
+            List<Predicate> predicates = new ArrayList<>();
             if (userRequestDto.getName() != null) predicates.add(nameBeginsWith);
             if (userRequestDto.getDateOfBirth() != null) predicates.add(bornAfter);
             if (userRequestDto.getEmail() != null) predicates.add(hasEmail);
             if (userRequestDto.getPhone() != null) predicates.add(hasPhone);
-            return criteriaBuilder.and(predicates.toArray(new jakarta.persistence.criteria.Predicate[0]));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
     }
 }
