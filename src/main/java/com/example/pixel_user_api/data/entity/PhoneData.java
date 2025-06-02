@@ -11,6 +11,8 @@ import lombok.Setter;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import java.util.Objects;
+
 @Entity
 @Getter
 @Setter
@@ -30,5 +32,17 @@ public class PhoneData {
         phoneData.setPhone(phone);
         phoneData.setUser(user);
         return phoneData;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PhoneData phoneData)) return false;
+        return Objects.equals(phone, phoneData.phone);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(phone);
     }
 }

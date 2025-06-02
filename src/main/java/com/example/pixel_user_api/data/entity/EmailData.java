@@ -11,6 +11,8 @@ import lombok.Setter;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import java.util.Objects;
+
 @Entity
 @Getter
 @Setter
@@ -30,5 +32,17 @@ public class EmailData {
         emailData.setEmail(email);
         emailData.setUser(user);
         return emailData;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof EmailData emailData)) return false;
+        return Objects.equals(email, emailData.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(email);
     }
 }
