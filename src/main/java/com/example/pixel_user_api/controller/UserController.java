@@ -5,6 +5,7 @@ import com.example.pixel_user_api.data.dto.request.UpdateUserRequestDto;
 import com.example.pixel_user_api.data.dto.response.UserResponseDto;
 import com.example.pixel_user_api.service.AuthenticationService;
 import com.example.pixel_user_api.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,7 @@ public class UserController {
     private final AuthenticationService authenticationService;
 
     @PutMapping
+    @Operation(description = "Updates user information: emails and phones.")
     public ResponseEntity<UserResponseDto> updateUser(@RequestBody UpdateUserRequestDto userRequestDto) {
         Long userId = authenticationService.getCurrentUserId().orElseThrow(this::authenticationException);
         UserResponseDto userResponseDto = userService.update(userId, userRequestDto);
@@ -45,6 +47,7 @@ public class UserController {
     }
 
     @GetMapping("/search")
+    @Operation(description = "Performs a search among registered users.")
     public ResponseEntity<List<UserResponseDto>> findUsers(@ParameterObject FindUserRequestDto userRequestDto,
                                                            @ParameterObject Pageable pageable) {
         List<UserResponseDto> userResponseDtos = userService.find(userRequestDto, pageable);
