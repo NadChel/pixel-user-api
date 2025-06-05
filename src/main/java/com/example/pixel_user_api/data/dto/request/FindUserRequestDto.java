@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @Setter
 public class FindUserRequestDto {
 
-    @Parameter(description = "Exclusive lower bound")
+    @Parameter(description = "Exclusive lower bound. Must be in the format yyyy-MM-dd")
     private LocalDate dateOfBirth;
     private String phone;
     @Parameter(description = "User name prefix")

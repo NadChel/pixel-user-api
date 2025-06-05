@@ -15,7 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,7 +33,7 @@ public class UserController {
     private final UserService userService;
     private final AuthenticationService authenticationService;
 
-    @PutMapping
+    @PatchMapping
     @Operation(description = "Updates user information: emails and phones.")
     public ResponseEntity<UserResponseDto> updateUser(@RequestBody UpdateUserRequestDto userRequestDto) {
         Long userId = authenticationService.getCurrentUserId().orElseThrow(this::authenticationException);
